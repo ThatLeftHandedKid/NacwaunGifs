@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nacwaun — gif archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f6f6f4;
+      --bg-tertiary: #efefed;
+      --text-primary: #1a1a18;
+      --text-secondary: #7a7a76;
+      --border-light: rgba(0,0,0,0.10);
+      --border-mid: rgba(0,0,0,0.18);
+      --border-strong: rgba(0,0,0,0.28);
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-primary: #1c1c1a;
+        --bg-secondary: #242422;
+        --bg-tertiary: #2c2c2a;
+        --text-primary: #eeeee8;
+        --text-secondary: #888882;
+        --border-light: rgba(255,255,255,0.10);
+        --border-mid: rgba(255,255,255,0.16);
+        --border-strong: rgba(255,255,255,0.24);
+      }
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 2.5rem;
+      border-bottom: 0.5px solid var(--border-light);
+      margin-bottom: 3rem;
+    }
+
+    .logo {
+      font-family: 'DM Mono', monospace;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .logo span { color: var(--text-secondary); font-weight: 300; }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav ul a {
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 400;
+      transition: color 0.15s;
+    }
+
+    nav ul a:hover { color: var(--text-primary); }
+
+    .hero { margin-bottom: 4rem; }
+
+    .hero-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 {
+      font-size: 52px;
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      font-weight: 300;
+      color: var(--text-secondary);
+    }
+
+    .hero p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      max-width: 480px;
+      font-weight: 300;
+    }
+
+    .section { margin-bottom: 4rem; }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 0.5px solid var(--border-light);
+    }
+
+    .section-header h2 {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+    }
+
+    .section-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 300;
+    }
+
+    .gif-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .gif-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    .gif-card {
+      border: 0.5px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--bg-secondary);
+      transition: border-color 0.2s;
+    }
+
+    .gif-card:hover { border-color: var(--border-strong); }
+
+    .gif-card img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      display: block;
+      background: var(--bg-tertiary);
+    }
+
+    .gif-placeholder {
+      width: 100%;
+      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-tertiary);
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--text-secondary);
+      letter-spacing: 0.05em;
+    }
+
+    .gif-info {
+      padding: 10px 12px;
+      border-top: 0.5px solid var(--border-light);
+    }
+
+    .gif-info strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .gif-info p {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 300;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    @media (max-width: 500px) {
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+
+    .contact-item {
+      padding: 1.25rem;
+      border: 0.5px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      background: var(--bg-secondary);
+    }
+
+    .contact-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .contact-value {
+      font-size: 14px;
+      color: var(--text-primary);
+      font-weight: 400;
+    }
+
+    .complaint-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    @media (max-width: 500px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      padding: 10px 12px;
+      border: 0.5px solid var(--border-light);
+      border-radius: var(--radius-md);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.15s;
+      resize: none;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus { border-color: var(--border-strong); }
+
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: var(--text-secondary);
+      opacity: 0.6;
+    }
+
+    .submit-btn {
+      align-self: flex-start;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      padding: 10px 24px;
+      border: 0.5px solid var(--border-mid);
+      border-radius: var(--radius-md);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      transition: background 0.15s;
+    }
+
+    .submit-btn:hover { background: var(--bg-secondary); }
+    .submit-btn:active { transform: scale(0.98); }
+    .submit-btn:disabled { opacity: 0.5; cursor: default; }
+
+    footer {
+      margin-top: 4rem;
+      padding-top: 1.5rem;
+      border-top: 0.5px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer p {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 300;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <nav>
+      <a class="logo" href="#">Nacwaun<span>.gif</span></a>
+      <ul>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#complaints">Complaints</a></li>
+      </ul>
+    </nav>
+
+    <div class="hero">
+      <p class="hero-tag">gif artist &amp; creator</p>
+      <h1>Moving things<br><em>one frame</em><br>at a time.</h1>
+      <p>A personal archive of animated work — loops, experiments, and moments made to move. Browse the collection below.</p>
+    </div>
+
+    <!-- WORK -->
+    <div class="section" id="work">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2>Work</h2>
+      </div>
+      <div class="gif-grid">
+
+        <div class="gif-card">
+          <!-- Replace the div below with: <img src="your-gif.gif" alt="title" /> -->
+          <div class="gif-placeholder">your gif here</div>
+          <div class="gif-info">
+            <strong>Untitled 001</strong>
+            <p>Add a short description</p>
+          </div>
+        </div>
+
+        <div class="gif-card">
+          <div class="gif-placeholder">your gif here</div>
+          <div class="gif-info">
+            <strong>Untitled 002</strong>
+            <p>Add a short description</p>
+          </div>
+        </div>
+
+        <div class="gif-card">
+          <div class="gif-placeholder">your gif here</div>
+          <div class="gif-info">
+            <strong>Untitled 003</strong>
+            <p>Add a short description</p>
+          </div>
+        </div>
+
+        <div class="gif-card">
+          <div class="gif-placeholder">your gif here</div>
+          <div class="gif-info">
+            <strong>Untitled 004</strong>
+            <p>Add a short description</p>
+          </div>
+        </div>
+
+        <div class="gif-card">
+          <div class="gif-placeholder">your gif here</div>
+          <div class="gif-info">
+            <strong>Untitled 005</strong>
+            <p>Add a short description</p>
+          </div>
+        </div>
+
+        <div class="gif-card">
+          <div class="gif-placeholder">your gif here</div>
+          <div class="gif-info">
+            <strong>Untitled 006</strong>
+            <p>Add a short description</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="section" id="contact">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2>Contact</h2>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-item">
+          <div class="contact-label">GitHub</div>
+          <div class="contact-value">github.com/ThatLeftHandedKid</div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-label">Email</div>
+          <div class="contact-value">your@email.com</div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-label">Available for</div>
+          <div class="contact-value">Commissions &amp; collabs</div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-label">Response time</div>
+          <div class="contact-value">Usually within 48 hrs</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPLAINTS -->
+    <div class="section" id="complaints">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2>Complaints</h2>
+      </div>
+      <div class="complaint-form">
+        <div class="form-row">
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" type="text" placeholder="your name" />
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" type="email" placeholder="your@email.com" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="subject">Subject</label>
+          <select id="subject">
+            <option value="">Select a topic</option>
+            <option>GIF quality</option>
+            <option>Missing credit</option>
+            <option>Broken link</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea id="message" rows="5" placeholder="describe your complaint..."></textarea>
+        </div>
+        <button class="submit-btn" onclick="this.textContent='sent ✓'; this.disabled=true;">Submit complaint</button>
+      </div>
+    </div>
+
+    <footer>
+      <p>Nacwaun — gif archive</p>
+      <p>github.com/ThatLeftHandedKid</p>
+    </footer>
+
+  </div>
+</body>
+</html>
